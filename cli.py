@@ -3,7 +3,7 @@
 import os
 import sys
 
-import anthropic
+from openai import OpenAI
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.markdown import Markdown
@@ -20,11 +20,11 @@ Type your question, or 'exit' to quit.
 
 
 def main():
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        console.print("[red]Set ANTHROPIC_API_KEY in your environment before running this.[/red]")
+    if not os.environ.get("OPENAI_API_KEY"):
+        console.print("[red]Set OPENAI_API_KEY in your environment before running this.[/red]")
         sys.exit(1)
 
-    client = anthropic.Anthropic()
+    client = OpenAI()
     messages = []
     console.print(BANNER)
 

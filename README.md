@@ -1,8 +1,9 @@
 # Portfolio Risk Agent
 
 A command-line chat agent for exploring portfolio risk, allocation, and compounding --
-backed by real historical market data and math, not guesses. Claude decides *which*
-calculation your question needs; the actual numbers come from `numpy`/`scipy`/`yfinance`.
+backed by real historical market data and math, not guesses. The model (OpenAI, by
+default `gpt-4o-mini`) decides *which* calculation your question needs; the actual
+numbers come from `numpy`/`scipy`/`yfinance`.
 
 **Educational tool only.** All data is historical, all projections are estimates, and
 none of this is financial advice. Consult a licensed financial advisor before acting on
@@ -37,7 +38,7 @@ Available tools:
 cd portfolio-risk-agent
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env   # then edit .env and add your real ANTHROPIC_API_KEY
+cp .env.example .env   # then edit .env and add your real OPENAI_API_KEY
 ```
 
 ## Running it
@@ -68,7 +69,7 @@ For a manual, human-run check against **live** yfinance data and your real local
 
 ```
 cli.py                 REPL entry point
-agent/loop.py           Hand-rolled Claude tool-use loop (no agent framework)
+agent/loop.py           Hand-rolled OpenAI tool-use loop (no agent framework)
 agent/tool_schemas.py   Tool definitions + dispatch table
 tools/risk.py           Historical risk metrics
 tools/portfolio.py      Mean-variance (max-Sharpe) allocation
@@ -83,4 +84,4 @@ tests/                  Automated pytest suite + manual_smoke_check.py
 - Historical price data is cached on disk (`.cache/`, 6-hour TTL) to avoid hammering
   `yfinance` on every request.
 - Persistent user data (profile, watchlist, holdings) lives in `.data/memory.db`, gitignored.
-- `PORTFOLIO_AGENT_MODEL` env var overrides the model (defaults to `claude-sonnet-5`).
+- `PORTFOLIO_AGENT_MODEL` env var overrides the model (defaults to `gpt-4o-mini`).

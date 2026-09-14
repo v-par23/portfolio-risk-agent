@@ -1,4 +1,9 @@
-"""JSON-schema tool definitions passed to the Claude API, and the dispatch table behind them."""
+"""Tool definitions passed to the LLM, and the dispatch table behind them.
+
+Authored once in Claude's {name, description, input_schema} shape, then converted below
+into OpenAI's {type: "function", function: {...}} shape -- so this file works as the single
+source of truth regardless of which provider agent/loop.py is calling.
+"""
 from tools.market_data import get_fundamentals, get_current_quote
 from tools.risk import compute_risk_metrics
 from tools.portfolio import optimize_allocation
@@ -12,7 +17,7 @@ from memory.store import (
     get_holdings,
 )
 
-TOOLS = [
+_TOOL_DEFS = [
     {
         "name": "get_stock_risk",
         "description": (
@@ -180,6 +185,18 @@ TOOLS = [
         "description": "Reads back the user's previously recorded holdings (ticker, shares, cost basis).",
         "input_schema": {"type": "object", "properties": {}},
     },
+]
+
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": t["name"],
+            "description": t["description"],
+            "parameters": t["input_schema"],
+        },
+    }
+    for t in _TOOL_DEFS
 ]
 
 
