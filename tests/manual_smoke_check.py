@@ -1,4 +1,11 @@
-"""Quick manual smoke test for the math/data layer -- no Anthropic API key required."""
+"""Manual, human-run check against LIVE yfinance data and the real local memory.db.
+
+Not part of the automated pytest suite (see tests/test_*.py for that) -- this hits the
+network and writes real rows into your memory.db, so run it by hand when you want to
+eyeball real output, e.g.: .venv/bin/python tests/manual_smoke_check.py
+
+No Anthropic API key required (only exercises the math/data layer, not the LLM loop).
+"""
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
