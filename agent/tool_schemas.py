@@ -8,6 +8,8 @@ from memory.store import (
     get_profile,
     add_watchlist_ticker,
     get_watchlist,
+    upsert_holding,
+    get_holdings,
 )
 
 TOOLS = [
@@ -143,6 +145,28 @@ TOOLS = [
         "description": "Reads back the user's persisted watchlist.",
         "input_schema": {"type": "object", "properties": {}},
     },
+    {
+        "name": "record_holding",
+        "description": (
+            "Records (or updates) a position the user actually holds -- ticker, share count, "
+            "and cost basis (average price paid per share). Use this when the user tells you "
+            "what they own so future advice can account for it."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "ticker": {"type": "string"},
+                "shares": {"type": "number", "description": "Number of shares held."},
+                "cost_basis": {"type": "number", "description": "Average price paid per share."},
+            },
+            "required": ["ticker", "shares", "cost_basis"],
+        },
+    },
+    {
+        "name": "get_holdings",
+        "description": "Reads back the user's previously recorded holdings (ticker, shares, cost basis).",
+        "input_schema": {"type": "object", "properties": {}},
+    },
 ]
 
 
@@ -199,6 +223,14 @@ def _dispatch_get_watchlist(_args):
     return {"watchlist": get_watchlist()}
 
 
+def _dispatch_record_holding(args):
+    return upsert_holding(args["ticker"], args["shares"], args["cost_basis"])
+
+
+def _dispatch_get_holdings(_args):
+    return {"holdings": get_holdings()}
+
+
 DISPATCH = {
     "get_stock_risk": _dispatch_get_stock_risk,
     "get_fundamentals": _dispatch_get_fundamentals,
@@ -209,4 +241,6 @@ DISPATCH = {
     "get_user_profile": _dispatch_get_user_profile,
     "add_to_watchlist": _dispatch_add_to_watchlist,
     "get_watchlist": _dispatch_get_watchlist,
+    "record_holding": _dispatch_record_holding,
+    "get_holdings": _dispatch_get_holdings,
 }

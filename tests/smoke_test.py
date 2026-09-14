@@ -6,7 +6,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from tools.risk import compute_risk_metrics
 from tools.portfolio import optimize_allocation
 from tools.compounding import simulate_growth, compare_reinvest_vs_cashout
-from memory.store import save_profile, get_profile, add_watchlist_ticker, get_watchlist
+from memory.store import (
+    save_profile,
+    get_profile,
+    add_watchlist_ticker,
+    get_watchlist,
+    upsert_holding,
+    get_holdings,
+)
 
 
 def main():
@@ -30,6 +37,8 @@ def main():
     print(get_profile())
     print(add_watchlist_ticker("NVDA"))
     print(get_watchlist())
+    print(upsert_holding("AAPL", shares=10, cost_basis=150.0))
+    print(get_holdings())
 
 
 if __name__ == "__main__":
