@@ -4,11 +4,13 @@ import os
 import sys
 
 import anthropic
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.markdown import Markdown
 
 from agent.loop import run_agent_turn, latest_text
 
+load_dotenv()
 console = Console()
 
 BANNER = """[bold cyan]Portfolio Risk Agent[/bold cyan]
