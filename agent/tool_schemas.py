@@ -1,5 +1,5 @@
 """JSON-schema tool definitions passed to the Claude API, and the dispatch table behind them."""
-from tools.market_data import get_fundamentals
+from tools.market_data import get_fundamentals, get_current_quote
 from tools.risk import compute_risk_metrics
 from tools.portfolio import optimize_allocation
 from tools.compounding import simulate_growth, compare_reinvest_vs_cashout
@@ -35,6 +35,19 @@ TOOLS = [
     {
         "name": "get_fundamentals",
         "description": "Fetches basic fundamentals for a ticker: sector, market cap, dividend yield, P/E.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"ticker": {"type": "string"}},
+            "required": ["ticker"],
+        },
+    },
+    {
+        "name": "get_live_quote",
+        "description": (
+            "Fetches a live/delayed price quote for a ticker: last price, change vs. previous "
+            "close (absolute and percent), and today's day-high/day-low range. Use this for "
+            "'what's it trading at' questions -- it's not historical, just the current snapshot."
+        ),
         "input_schema": {
             "type": "object",
             "properties": {"ticker": {"type": "string"}},
@@ -178,6 +191,10 @@ def _dispatch_get_fundamentals(args):
     return get_fundamentals(args["ticker"])
 
 
+def _dispatch_get_live_quote(args):
+    return get_current_quote(args["ticker"])
+
+
 def _dispatch_optimize_portfolio(args):
     return optimize_allocation(
         risky_tickers=args["risky_tickers"],
@@ -234,6 +251,7 @@ def _dispatch_get_holdings(_args):
 DISPATCH = {
     "get_stock_risk": _dispatch_get_stock_risk,
     "get_fundamentals": _dispatch_get_fundamentals,
+    "get_live_quote": _dispatch_get_live_quote,
     "optimize_portfolio": _dispatch_optimize_portfolio,
     "simulate_compounding": _dispatch_simulate_compounding,
     "compare_reinvest_vs_cashout": _dispatch_compare_reinvest_vs_cashout,

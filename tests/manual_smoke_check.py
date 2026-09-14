@@ -11,6 +11,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from tools.risk import compute_risk_metrics
+from tools.market_data import get_current_quote
 from tools.portfolio import optimize_allocation
 from tools.compounding import simulate_growth, compare_reinvest_vs_cashout
 from memory.store import (
@@ -29,6 +30,9 @@ def main():
 
     print("\n=== risk metrics: BND (should be low risk) ===")
     print(compute_risk_metrics("BND", period="2y"))
+
+    print("\n=== live quote: AAPL ===")
+    print(get_current_quote("AAPL"))
 
     print("\n=== portfolio optimization: AAPL, TSLA, MSFT / balanced ===")
     print(optimize_allocation(["AAPL", "TSLA", "MSFT"], risk_tolerance="balanced"))

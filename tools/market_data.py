@@ -27,6 +27,30 @@ def get_price_history(ticker: str, period: str = "5y") -> pd.DataFrame:
     return df
 
 
+def get_current_quote(ticker: str) -> dict:
+    """Best-effort live/delayed quote snapshot: last price, day range, and change vs previous close."""
+    fast = dict(yf.Ticker(ticker).fast_info)
+    last_price = fast.get("lastPrice")
+    if last_price is None:
+        raise ValueError(f"No quote data found for ticker '{ticker}'")
+
+    previous_close = fast.get("previousClose")
+    change = last_price - previous_close if previous_close is not None else None
+    pct_change = change / previous_close if change is not None and previous_close else None
+
+    return {
+        "ticker": ticker.upper(),
+        "last_price": round(last_price, 2),
+        "previous_close": round(previous_close, 2) if previous_close is not None else None,
+        "change": round(change, 2) if change is not None else None,
+        "pct_change": round(pct_change, 4) if pct_change is not None else None,
+        "day_high": round(fast["dayHigh"], 2) if fast.get("dayHigh") is not None else None,
+        "day_low": round(fast["dayLow"], 2) if fast.get("dayLow") is not None else None,
+        "currency": fast.get("currency"),
+        "exchange": fast.get("exchange"),
+    }
+
+
 def get_fundamentals(ticker: str) -> dict:
     """Best-effort snapshot of fundamentals: sector, market cap, dividend yield, beta (as reported)."""
     info = yf.Ticker(ticker).info
